@@ -287,7 +287,7 @@ export function MenuOverlay() {
   const navLinks = [
     { name: "works", href: "/" },
     { name: "about", href: "/about" },
-    { name: "contact", href: "mailto:isshaaannn@gmail.com" },
+    { name: "contact", href: "mailto:isshhaaannn@gmail.com" },
     { name: "book", href: BOOKING_URL },
   ];
 
@@ -383,10 +383,10 @@ export function MenuOverlay() {
           className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 w-full pt-4 border-t border-[#100f0c]/10"
         >
           <a
-            href="mailto:isshaaannn@gmail.com"
+            href="mailto:isshhaaannn@gmail.com"
             className="text-sm font-sans text-[#100f0c]/75 hover:text-[#100f0c] transition-colors pointer-events-auto"
           >
-            isshaaannn@gmail.com
+            isshhaaannn@gmail.com
           </a>
 
           <div className="flex gap-2">

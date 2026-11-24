@@ -29,7 +29,7 @@ interface SignatureProps {
 }
 
 export function Signature({
-  text = "isshaaannn@gmail.com",
+  text = "isshhaaannn@gmail.com",
   color = "#F2EEE5",
   fontSize = 35,
   duration = 0.7,

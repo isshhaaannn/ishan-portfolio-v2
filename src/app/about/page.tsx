@@ -54,12 +54,12 @@ export default function AboutPage() {
             book a 30-min call
           </a>
           <a
-            href="mailto:isshaaannn@gmail.com"
+            href="mailto:isshhaaannn@gmail.com"
             className="inline-flex items-center justify-center transition-all mb-4 group"
             aria-label="Email Ishan"
           >
             <Signature
-              text="isshaaannn@gmail.com"
+              text="isshhaaannn@gmail.com"
               fontSize={35}
               color="#F2EEE5"
               fontUrl="/fonts/helvetica-255/Helvetica-Bold.ttf"
