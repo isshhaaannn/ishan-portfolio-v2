@@ -25,7 +25,7 @@ export function Header() {
         <Link href="/" className="text-xl sm:text-2xl font-bold tracking-tighter mix-blend-difference text-white">
           ishan.
         </Link>
-        {AVAILABILITY && (
+        {AVAILABILITY && !activeProjectId && (
           <span className="hidden lg:inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/30 backdrop-blur-md px-3 py-1 text-xs text-white/75">
             <span className="relative flex w-1.5 h-1.5" aria-hidden="true">
               <span className="absolute inset-0 rounded-full bg-[#7CFFB2] opacity-60 motion-safe:animate-ping" />

@@ -15,7 +15,9 @@ export function HeroLine() {
 
   useEffect(() => {
     let t: ReturnType<typeof setTimeout>;
-    const busy = () => {
+    const busy = (e: Event) => {
+      // Using the hero itself (its book button) is not "spinning".
+      if ((e.target as Element | null)?.closest?.("[data-hero]")) return;
       setQuiet(false);
       clearTimeout(t);
       t = setTimeout(() => setQuiet(true), 7000);
@@ -37,6 +39,7 @@ export function HeroLine() {
     <AnimatePresence>
       {show && (
         <motion.section
+          data-hero
           aria-label="Introduction"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

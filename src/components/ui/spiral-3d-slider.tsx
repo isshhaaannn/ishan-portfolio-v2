@@ -236,7 +236,11 @@ function SpiralScene({
   const hovered = useRef<number | null>(null);
   const slideTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const baseTextures = useRef<(Texture | null)[]>([]);
+  // One GPU texture per image URL, shared by every tile and reused across filter changes.
   const textureCache = useRef(new Map<string, Texture>());
+  const baseUrls = useRef(new Set<string>());
+  // Slideshow-only textures, oldest first; capped so hovering many tiles can't exhaust GPU memory.
+  const slideLru = useRef<string[]>([]);
   const meshes = useRef<(Mesh | null)[]>([]);
   const materials = useRef<(ShaderMaterial | null)[]>([]);
 
@@ -261,6 +265,25 @@ function SpiralScene({
   useEffect(() => {
     let isMounted = true;
     const loader = new TextureLoader();
+
+    // The tile set changed (e.g. a filter): per-index state belongs to the old set.
+    if (slideTimer.current) clearInterval(slideTimer.current);
+    slideTimer.current = null;
+    hovered.current = null;
+    baseTextures.current = [];
+
+    const applyBase = (index: number, tex: Texture) => {
+      baseTextures.current[index] = tex;
+      const mat = materials.current[index];
+      if (hovered.current === index) return; // a slideshow restores the base on leave
+      if (mat) {
+        mat.uniforms.uTexture.value = tex;
+        mat.uniforms.uImageAspect.value = imageAspect(tex);
+      } else if (uniforms[index]) {
+        uniforms[index].uTexture.value = tex;
+        uniforms[index].uImageAspect.value = imageAspect(tex);
+      }
+    };
 
     // Prioritize visible items first (expanding outwards from center 0), then the rest
     const total = sceneItems.length;
@@ -288,9 +311,16 @@ function SpiralScene({
       const index = queue.shift();
       if (index === undefined) return;
 
-      activeLoads++;
       const item = sceneItems[index];
+      baseUrls.current.add(item.src);
+      const cached = textureCache.current.get(item.src);
+      if (cached) {
+        applyBase(index, cached);
+        loadNext();
+        return;
+      }
 
+      activeLoads++;
       loader.load(
         item.src,
         (loadedTex) => {
@@ -304,17 +334,14 @@ function SpiralScene({
           loadedTex.anisotropy = Math.min(4, gl.capabilities.getMaxAnisotropy());
           loadedTex.needsUpdate = true;
 
-          baseTextures.current[index] = loadedTex;
-          textureCache.current.set(item.src, loadedTex);
-          const mat = materials.current[index];
-          if (hovered.current === index) {
-            // A slideshow is running on this tile; it restores the base texture on leave.
-          } else if (mat) {
-            mat.uniforms.uTexture.value = loadedTex;
-            mat.uniforms.uImageAspect.value = imageAspect(loadedTex);
-          } else if (uniforms[index]) {
-            uniforms[index].uTexture.value = loadedTex;
-            uniforms[index].uImageAspect.value = imageAspect(loadedTex);
+          // Another tile may have loaded the same URL meanwhile: keep one texture.
+          const existing = textureCache.current.get(item.src);
+          if (existing) {
+            loadedTex.dispose();
+            applyBase(index, existing);
+          } else {
+            textureCache.current.set(item.src, loadedTex);
+            applyBase(index, loadedTex);
           }
 
           activeLoads--;
@@ -417,11 +444,29 @@ function SpiralScene({
     const hit = textureCache.current.get(url);
     if (hit) return done(hit);
     new TextureLoader().load(url, (tex) => {
+      const raced = textureCache.current.get(url);
+      if (raced) { tex.dispose(); return done(raced); }
       tex.colorSpace = SRGBColorSpace;
       tex.minFilter = LinearFilter;
       tex.magFilter = LinearFilter;
       tex.needsUpdate = true;
       textureCache.current.set(url, tex);
+      if (!baseUrls.current.has(url)) {
+        slideLru.current.push(url);
+        // Evict the oldest slideshow textures beyond the cap (never a tile's own cover).
+        while (slideLru.current.length > 24) {
+          const old = slideLru.current.shift()!;
+          const oldTex = textureCache.current.get(old);
+          const inUse = materials.current.some((m) => m?.uniforms.uTexture.value === oldTex);
+          if (oldTex && !inUse && !baseUrls.current.has(old)) {
+            oldTex.dispose();
+            textureCache.current.delete(old);
+          } else if (inUse) {
+            slideLru.current.push(old);
+            break;
+          }
+        }
+      }
       done(tex);
     });
   };
@@ -444,7 +489,9 @@ function SpiralScene({
     slideTimer.current = null;
     const index = hovered.current;
     hovered.current = null;
-    if (index != null && baseTextures.current[index]) setTileTexture(index, baseTextures.current[index]!);
+    if (index == null) return;
+    const base = baseTextures.current[index] ?? textureCache.current.get(sceneItems[index]?.src ?? "");
+    if (base) setTileTexture(index, base);
   }
   useEffect(() => () => { if (slideTimer.current) clearInterval(slideTimer.current); }, []);
 
