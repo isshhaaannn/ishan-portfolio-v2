@@ -1,7 +1,7 @@
 // Editable site copy and settings. Change these lines, not the components.
 
 /** Header chip. Keep it short and true, e.g. "booking for January". Empty string hides it. */
-export const AVAILABILITY = "open for new projects";
+export const AVAILABILITY = "open for new projects right now";
 
 /** The line that sits over the helix on the home page. */
 export const HERO = {

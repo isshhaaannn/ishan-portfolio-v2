@@ -17,14 +17,15 @@ const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 export const metadata: Metadata = {
   metadataBase: new URL("https://ishan.vryks.com"),
   title: {
-    default: "Ishan Mitra | Digital Designer & 3D Visual Artist",
+    default: "Ishan Mitra | Art Director & Creative Designer",
     template: "%s | Ishan Mitra",
   },
   description:
-    "Multidisciplinary visual designer blending brand identity, performance creative, and 3D visual storytelling to build high-converting digital experiences.",
+    "Art director and creative designer behind 40M+ views for founder-led brands and media: brand identity, social content systems, performance creative and 3D visual storytelling.",
   keywords: [
     "Ishan Mitra",
-    "Digital Designer",
+    "Art Director",
+    "Creative Designer",
     "Brand Identity",
     "3D Spatial UI",
     "Performance Creative",
@@ -38,9 +39,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Ishan Mitra | Digital Designer & 3D Visual Artist",
+    title: "Ishan Mitra | Art Director & Creative Designer",
     description:
-      "Multidisciplinary visual designer blending brand identity, performance creative, and 3D visual storytelling to build high-converting digital experiences.",
+      "Art director and creative designer behind 40M+ views for founder-led brands and media: brand identity, social content systems, performance creative and 3D visual storytelling.",
     url: "https://ishan.vryks.com",
     siteName: "Ishan Mitra Portfolio",
     images: [
@@ -56,9 +57,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ishan Mitra | Digital Designer & 3D Visual Artist",
+    title: "Ishan Mitra | Art Director & Creative Designer",
     description:
-      "Multidisciplinary visual designer blending brand identity, performance creative, and 3D visual storytelling to build high-converting digital experiences.",
+      "Art director and creative designer behind 40M+ views for founder-led brands and media: brand identity, social content systems, performance creative and 3D visual storytelling.",
     images: ["/about/hero-bg.png"],
     creator: "@ishan575",
   },
@@ -76,7 +77,7 @@ const jsonLd = {
       "@type": "Person",
       "@id": "https://ishan.vryks.com/#person",
       name: "Ishan Mitra",
-      jobTitle: "Digital Designer & 3D Visual Artist",
+      jobTitle: "Art Director & Creative Designer",
       url: "https://ishan.vryks.com",
       image: "https://ishan.vryks.com/about/ishan-cutout.png",
       sameAs: [

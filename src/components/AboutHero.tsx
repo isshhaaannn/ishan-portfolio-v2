@@ -28,13 +28,16 @@ export function AboutHero() {
   const subjectY = useTransform(scrollYProgress, [0, 1], ["0%", "3%"]);
   const subjectScale = useTransform(scrollYProgress, [0, 1], [1, 1.02]);
 
-  // Left column: "I'm Ishan, a digital designer blending [Sparkle] brand identity, performance creative,"
+  // Left column: "I'm Ishan, an art director & creative designer blending [Sparkle] brand identity, performance creative,"
   const leftItems: BioItem[] = useMemo(
     () => [
       { type: "text", word: "I'm" },
       { type: "text", word: "Ishan," },
-      { type: "text", word: "a" },
-      { type: "text", word: "digital" },
+      { type: "text", word: "an" },
+      { type: "text", word: "art" },
+      { type: "text", word: "director" },
+      { type: "text", word: "&" },
+      { type: "text", word: "creative" },
       { type: "text", word: "designer" },
       { type: "text", word: "blending" },
       { type: "icon", id: 0 },

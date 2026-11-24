@@ -14,14 +14,14 @@ import { BookButton } from "@/components/BookButton";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Meet Ishan Mitra — digital designer shaping bold brand identities, performance creatives, and 3D visual systems.",
+    "Meet Ishan Mitra — art director and creative designer shaping bold brand identities, performance creative, and 3D visual systems.",
   alternates: {
     canonical: "/about",
   },
   openGraph: {
     title: "About | Ishan Mitra",
     description:
-      "Meet Ishan Mitra — digital designer shaping bold brand identities, performance creatives, and 3D visual systems.",
+      "Meet Ishan Mitra — art director and creative designer shaping bold brand identities, performance creative, and 3D visual systems.",
     url: "https://ishan.vryks.com/about",
   },
 };
