@@ -101,7 +101,13 @@ export function ProjectModal({ project, allProjects = [] }: ProjectModalProps) {
               return (
                 <div key={i} className={`rounded-2xl overflow-hidden bg-black/5 ${spanClasses}`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={encodeURI(src)} alt={`${project.website_project_name} - ${i}`} className="w-full h-full object-cover" />
+                  <img
+                    src={encodeURI(src)}
+                    alt={`${project.website_project_name} - ${i + 1}`}
+                    className="w-full h-full object-cover"
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                  />
                 </div>
               );
             })}
@@ -132,6 +138,8 @@ export function ProjectModal({ project, allProjects = [] }: ProjectModalProps) {
                       src={encodeURI(nextProject.asset_locations[0])}
                       alt={nextProject.website_project_name}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
                       <span className="bg-[#100F0C] text-[#F2EEE5] px-8 py-4 rounded-full text-base font-sans font-medium shadow-xl transform translate-y-3 group-hover:translate-y-0 transition-all duration-300">

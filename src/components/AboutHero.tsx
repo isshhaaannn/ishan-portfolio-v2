@@ -96,11 +96,15 @@ export function AboutHero() {
           className="absolute inset-0 pointer-events-none z-0"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/about/hero-bg.png"
-            alt=""
-            className="w-full h-full object-cover object-center opacity-75"
-          />
+          <picture>
+            <source srcSet="/about/hero-bg.webp" type="image/webp" />
+            <img
+              src="/about/hero-bg.png"
+              alt=""
+              className="w-full h-full object-cover object-center opacity-75"
+              decoding="async"
+            />
+          </picture>
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/60" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,#000000_88%)]" />
         </motion.div>
@@ -153,15 +157,20 @@ export function AboutHero() {
             <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-64 h-64 md:w-96 md:h-96 bg-orange-500/25 blur-[120px] rounded-full pointer-events-none" />
 
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/about/ishan-cutout.png"
-              alt="Ishan Mitra"
-              className="min-h-[400px] max-h-full w-auto object-contain object-bottom"
-              style={{
-                maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
-                WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
-              }}
-            />
+            <picture className="contents">
+              <source srcSet="/about/ishan-cutout.webp" type="image/webp" />
+              <img
+                src="/about/ishan-cutout.png"
+                alt="Ishan Mitra"
+                className="min-h-[400px] max-h-full w-auto object-contain object-bottom"
+                fetchPriority="high"
+                decoding="async"
+                style={{
+                  maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
+                  WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
+                }}
+              />
+            </picture>
           </motion.div>
 
           {/* Right Text Column */}

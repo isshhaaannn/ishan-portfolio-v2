@@ -7,6 +7,7 @@ import {
 } from "./webgl-error-boundary";
 import { cn } from "@/lib/utils";
 import {
+  Cache,
   CanvasTexture,
   DoubleSide,
   LinearFilter,
@@ -16,6 +17,10 @@ import {
   Texture,
   TextureLoader,
 } from "three";
+
+if (typeof window !== "undefined") {
+  Cache.enabled = true;
+}
 import {
   Suspense,
   type MutableRefObject,
@@ -240,16 +245,25 @@ function SpiralScene({
     let isMounted = true;
     const loader = new TextureLoader();
 
-    // Prioritize front-facing items first (0, 1, 2, 15, 14), then the rest sequentially
+    // Prioritize visible items first (expanding outwards from center 0), then the rest
     const total = sceneItems.length;
-    const priorityIndices = [0, 1, 2, total - 1, total - 2, 3, 4];
+    const priorityIndices: number[] = [];
+    for (let offset = 0; offset <= 8; offset++) {
+      if (offset === 0) {
+        priorityIndices.push(0);
+      } else {
+        if (offset < total) priorityIndices.push(offset);
+        const wrappedNeg = (total - offset) % total;
+        if (!priorityIndices.includes(wrappedNeg)) priorityIndices.push(wrappedNeg);
+      }
+    }
     const otherIndices = Array.from({ length: total }, (_, i) => i).filter(
       (i) => !priorityIndices.includes(i),
     );
-    const queue = [...priorityIndices.filter((i) => i < total), ...otherIndices];
+    const queue = [...priorityIndices, ...otherIndices];
 
     let activeLoads = 0;
-    const maxConcurrent = 2; // Stream 2 images concurrently so UI never drops frames
+    const maxConcurrent = 3; // Stream up to 3 images concurrently without dropping frames
 
     const loadNext = () => {
       if (!isMounted || queue.length === 0 || activeLoads >= maxConcurrent) return;
@@ -336,6 +350,12 @@ function SpiralScene({
       if (!mesh || !material) return;
 
       const position = wrappedPosition(index - progress.current, count);
+
+      // Frustum & viewport culling: Skip rendering and heavy uniform math for cards outside view
+      const isVisible = Math.abs(position) <= 7.5;
+      mesh.visible = isVisible;
+      if (!isVisible) return;
+
       const angle = position * 0.78;
       const depth = (Math.cos(angle) + 1) / 2;
       const scale = 0.74 + depth * 0.26;

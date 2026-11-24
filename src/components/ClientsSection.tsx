@@ -13,37 +13,37 @@ const CLIENTS: ClientItem[] = [
   {
     name: "Daily Mail",
     category: "Media & Editorial",
-    logo: "/clients/dailymail.png",
+    logo: "/clients/dailymail.webp",
     theme: "normal",
   },
   {
     name: "EUVC",
     category: "Venture Capital",
-    logo: "/clients/euvc.png",
+    logo: "/clients/euvc.webp",
     theme: "normal",
   },
   {
     name: "Kelme India",
     category: "Sports & Apparel",
-    logo: "/clients/kelme.png",
+    logo: "/clients/kelme.webp",
     theme: "contained",
   },
   {
     name: "MetroMedia",
     category: "Agency & Tech",
-    logo: "/clients/metromedia.png",
+    logo: "/clients/metromedia.webp",
     theme: "contained",
   },
   {
     name: "Berribot",
     category: "AI Recruiting Platform",
-    logo: "/clients/berribot.png",
+    logo: "/clients/berribot.webp",
     theme: "normal",
   },
   {
     name: "Firi",
     category: "Skincare & Haircare",
-    logo: "/clients/firi.png",
+    logo: "/clients/firi.webp",
     theme: "accent",
   },
 ];
@@ -132,6 +132,8 @@ export function ClientsSection() {
                     src={client.logo}
                     alt={client.name}
                     className="max-w-full max-h-full object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               ) : client.theme === "accent" ? (
@@ -141,6 +143,8 @@ export function ClientsSection() {
                     src={client.logo}
                     alt={client.name}
                     className="h-7 w-auto object-contain brightness-110"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               ) : (
@@ -150,6 +154,8 @@ export function ClientsSection() {
                     src={client.logo}
                     alt={client.name}
                     className="w-full h-full object-cover rounded-full"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               )}

@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import type { Metadata } from "next";
 import { AboutHero } from "@/components/AboutHero";
 import { IconTrail } from "@/components/IconTrail";
 import { WorkSlider } from "@/components/WorkSlider";
@@ -7,6 +8,22 @@ import { ClientsSection } from "@/components/ClientsSection";
 import { Project } from "@/components/3d/HelixCanvas";
 import { ThreeDPaper } from "@/components/3d/ThreeDPaper";
 import { Signature } from "@/components/ui/signature";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Meet Ishan Mitra — digital designer shaping bold brand identities, performance creatives, and 3D visual systems.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About | Ishan Mitra",
+    description:
+      "Meet Ishan Mitra — digital designer shaping bold brand identities, performance creatives, and 3D visual systems.",
+    url: "https://ishan.vryks.com/about",
+  },
+};
 
 export default function AboutPage() {
   const dbPath = path.join(process.cwd(), "portfolio_db.json");
@@ -17,10 +34,11 @@ export default function AboutPage() {
   const sliderProjects = projects.slice(0, 10);
 
   return (
-    <main className="relative min-h-screen bg-[#000000] text-[#F2EEE5] pb-24">
+    <main id="main-content" className="relative min-h-screen bg-[#000000] text-[#F2EEE5] pb-24">
       <AboutHero />
       <ClientsSection />
       <WorkSlider projects={sliderProjects} />
+      <ScrollToTop />
       
       {/* Footer / Social Links */}
       <IconTrail>

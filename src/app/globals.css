@@ -185,3 +185,18 @@ html.lenis, html.lenis body {
     @apply font-sans;
   }
 }
+
+/* Print Stylesheet */
+@media print {
+  header,
+  nav,
+  #header-menu-button,
+  button,
+  .pointer-events-none {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+}

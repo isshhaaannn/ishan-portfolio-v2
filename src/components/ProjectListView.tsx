@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { Project } from "./3d/HelixCanvas";
 import { useUIStore } from "@/store/useUIStore";
 
@@ -12,8 +12,13 @@ interface ProjectListViewProps {
 export function ProjectListView({ projects }: ProjectListViewProps) {
   const { setActiveProject } = useUIStore();
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [imageIndex, setImageIndex] = useState(0);
+
+  // Smooth compositor-driven mouse tracking without triggering React re-renders
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { damping: 28, stiffness: 320 });
+  const springY = useSpring(mouseY, { damping: 28, stiffness: 320 });
 
   // Group projects by category
   const categories = Array.from(new Set(projects.map((p) => p.category_display)));
@@ -25,11 +30,12 @@ export function ProjectListView({ projects }: ProjectListViewProps) {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
     };
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [mouseX, mouseY]);
 
   useEffect(() => {
     if (!hoveredCategory || categoryImages.length <= 1) return;
@@ -103,10 +109,10 @@ export function ProjectListView({ projects }: ProjectListViewProps) {
             transition={{ type: "spring", damping: 25, stiffness: 260 }}
             className="fixed pointer-events-none z-10 rounded-2xl overflow-hidden shadow-2xl bg-black/60 backdrop-blur-md border border-white/10 hidden md:block"
             style={{
-              left: mousePos.x,
-              top: mousePos.y,
-              x: "-50%",
-              y: "-50%",
+              x: springX,
+              y: springY,
+              translateX: "-50%",
+              translateY: "-50%",
               width: 300,
               height: 400,
             }}
