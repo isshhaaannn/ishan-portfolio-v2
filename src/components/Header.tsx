@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUIStore } from "@/store/useUIStore";
 import { AudioPlayer } from "@/components/AudioPlayer";
+import { BOOKING_URL } from "@/lib/booking";
 
 export function Header() {
   const { viewMode, setViewMode, toggleMenu, isMenuOpen, activeProjectId, setActiveProject } = useUIStore();
@@ -37,6 +38,19 @@ export function Header() {
 
       {/* Right Controls (Audio Toggle & Menu Button) */}
       <div className={`flex items-center gap-2 sm:gap-2.5 ${isMenuOpen ? "pointer-events-none" : "pointer-events-auto"}`}>
+        {!isMenuOpen && (
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Book a 30-minute intro call (opens Cal.com)"
+            className="flex items-center gap-1.5 bg-[#fcfcfc] text-[#100f0c] font-medium rounded-full px-3.5 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-white shadow-sm hover:shadow transition-all pointer-events-auto cursor-pointer border border-[#100f0c]/10"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#100f0c]" aria-hidden="true" />
+            <span className="sm:hidden">.book</span>
+            <span className="hidden sm:inline">.book a call</span>
+          </a>
+        )}
         <div className="pointer-events-auto">
           <AudioPlayer />
         </div>

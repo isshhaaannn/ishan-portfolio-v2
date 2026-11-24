@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useUIStore } from "@/store/useUIStore";
 import Link from "next/link";
+import { BOOKING_URL } from "@/lib/booking";
 import gsap from "gsap";
 import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 
@@ -287,6 +288,7 @@ export function MenuOverlay() {
     { name: "works", href: "/" },
     { name: "about", href: "/about" },
     { name: "contact", href: "mailto:isshaaannn@gmail.com" },
+    { name: "book", href: BOOKING_URL },
   ];
 
   return (
@@ -360,6 +362,7 @@ export function MenuOverlay() {
               <Link
                 href={item.href}
                 onClick={closeMenu}
+                {...(item.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className="text-6xl sm:text-7xl md:text-8xl font-bold tracking-tight transition-all duration-300 flex items-center group font-sans relative text-[#100f0c] pointer-events-auto"
               >
                 {/* Unclipped circular hover dot with power2.out easing */}
