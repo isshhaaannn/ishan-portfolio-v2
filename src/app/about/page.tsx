@@ -9,7 +9,7 @@ import { Project } from "@/components/3d/HelixCanvas";
 import { ThreeDPaper } from "@/components/3d/ThreeDPaper";
 import { Signature } from "@/components/ui/signature";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
-import { BOOKING_URL } from "@/lib/booking";
+import { BookButton } from "@/components/BookButton";
 
 export const metadata: Metadata = {
   title: "About",
@@ -44,18 +44,13 @@ export default function AboutPage() {
       {/* Footer / Social Links */}
       <IconTrail>
         <div className="max-w-6xl mx-auto px-6 flex flex-col items-center justify-center gap-8 w-full z-10">
-          <a
-            href={BOOKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 bg-[#F2EEE5] text-[#100f0c] font-medium rounded-full px-6 py-3 text-sm md:text-base hover:bg-white transition-colors"
-          >
+          <BookButton className="inline-flex items-center gap-2.5 bg-[#F2EEE5] text-[#100f0c] font-medium rounded-full px-6 py-3 text-sm md:text-base hover:bg-white transition-colors">
             <span className="w-2 h-2 rounded-full bg-[#100f0c]" aria-hidden="true" />
             book a 30-min call
-          </a>
+          </BookButton>
           <a
             href="mailto:isshhaaannn@gmail.com"
-            className="inline-flex items-center justify-center transition-all mb-4 group"
+            className="inline-flex max-w-full items-center justify-center transition-all mb-4 group"
             aria-label="Email Ishan"
           >
             <Signature
@@ -66,6 +61,7 @@ export default function AboutPage() {
               inView={true}
               once={false}
               replayOnHover={true}
+              className="max-w-full h-auto"
             />
           </a>
 

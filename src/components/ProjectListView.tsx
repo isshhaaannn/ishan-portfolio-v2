@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { Project } from "./3d/HelixCanvas";
 import { useUIStore } from "@/store/useUIStore";
+import { BUYERS } from "@/lib/curation";
 
 interface ProjectListViewProps {
   projects: Project[];
@@ -20,11 +21,13 @@ export function ProjectListView({ projects }: ProjectListViewProps) {
   const springX = useSpring(mouseX, { damping: 28, stiffness: 320 });
   const springY = useSpring(mouseY, { damping: 28, stiffness: 320 });
 
-  // Group projects by category
-  const categories = Array.from(new Set(projects.map((p) => p.category_display)));
+  // Group projects by who the work was made for (see src/lib/curation.ts)
+  const groupOf = (p: Project) => p.buyer ?? p.category_display;
+  const categories = (BUYERS as readonly string[]).filter((b) => projects.some((p) => groupOf(p) === b))
+    .concat(Array.from(new Set(projects.map(groupOf))).filter((c) => !(BUYERS as readonly string[]).includes(c)));
 
   const categoryProjects = hoveredCategory
-    ? projects.filter((p) => p.category_display === hoveredCategory)
+    ? projects.filter((p) => groupOf(p) === hoveredCategory)
     : [];
   const categoryImages = categoryProjects.flatMap((p) => p.asset_locations);
 
@@ -46,7 +49,7 @@ export function ProjectListView({ projects }: ProjectListViewProps) {
   }, [hoveredCategory, categoryImages.length]);
 
   const handleCategoryClick = (category: string) => {
-    const firstProject = projects.find((p) => p.category_display === category);
+    const firstProject = projects.find((p) => groupOf(p) === category);
     if (firstProject) {
       setActiveProject(firstProject.id);
     }
@@ -61,7 +64,7 @@ export function ProjectListView({ projects }: ProjectListViewProps) {
     >
       <div className="relative z-20 flex flex-col items-center justify-center gap-2 md:gap-4 w-full max-w-4xl px-4 pointer-events-auto">
         {categories.map((category) => {
-          const count = projects.filter((p) => p.category_display === category).length;
+          const count = projects.filter((p) => groupOf(p) === category).length;
           const isHovered = hoveredCategory === category;
 
           return (

@@ -7,6 +7,10 @@ import { SpiralSlider } from "./SpiralSlider";
 import { ProjectListView } from "./ProjectListView";
 import { OrigamiLoop } from "@/components/ui/origami-loop";
 import { AnimatePresence, motion } from "framer-motion";
+import { FilterChips } from "./FilterChips";
+import { HeroLine } from "./HeroLine";
+import { ProofTicker } from "./ProofTicker";
+import { CursorLabel } from "./CursorLabel";
 
 export function MainView({ projects }: { projects: Project[] }) {
   const { viewMode, activeProjectId, setActiveProject } = useUIStore();
@@ -90,6 +94,15 @@ export function MainView({ projects }: { projects: Project[] }) {
           <ProjectListView key="list" projects={projects} />
         )}
       </AnimatePresence>
+
+      {viewMode === "spiral" && (
+        <>
+          <FilterChips />
+          <HeroLine />
+          <CursorLabel />
+        </>
+      )}
+      <ProofTicker />
     </>
   );
 }

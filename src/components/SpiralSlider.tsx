@@ -29,7 +29,7 @@ export function SpiralSlider({ projects }: SpiralSliderProps) {
             initial={{ opacity: 0, y: 20, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 20, x: "-50%" }}
-            className="fixed bottom-8 md:bottom-12 left-1/2 z-20 flex items-center gap-3 bg-white text-black p-1.5 pr-6 rounded-full shadow-2xl pointer-events-none"
+            className="fixed bottom-14 md:bottom-16 left-1/2 z-20 flex items-center gap-3 bg-white text-black p-1.5 pr-6 rounded-full shadow-2xl pointer-events-none"
           >
             <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}

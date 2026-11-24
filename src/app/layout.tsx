@@ -6,6 +6,11 @@ import { MenuOverlay } from "@/components/MenuOverlay";
 import { ClientDitherWrapper } from "@/components/ClientDitherWrapper";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import fs from "fs";
+import path from "path";
+import { BriefBuilder } from "@/components/BriefBuilder";
+import { Freebie } from "@/components/Freebie";
+import { curate } from "@/lib/curation";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -94,6 +99,15 @@ const jsonLd = {
   ],
 };
 
+function freebieImages(): string[] {
+  try {
+    const raw = fs.readFileSync(path.join(process.cwd(), "portfolio_db.json"), "utf-8");
+    return curate(JSON.parse(raw)).freebies;
+  } catch {
+    return [];
+  }
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -116,6 +130,8 @@ export default function RootLayout({
         </a>
         <ClientDitherWrapper>
           <GridBackground />
+          <BriefBuilder />
+          <Freebie images={freebieImages()} />
           <MenuOverlay />
           <Header />
           {children}

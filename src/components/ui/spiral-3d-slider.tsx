@@ -21,6 +21,7 @@ import {
 if (typeof window !== "undefined") {
   Cache.enabled = true;
 }
+import { sfx } from "@/lib/sfx";
 import {
   Suspense,
   type MutableRefObject,
@@ -37,6 +38,8 @@ export interface Spiral3DSlide {
   src: string;
   /** Accessible description for the image. */
   alt: string;
+  /** Extra frames of the same project, cycled while the tile is hovered. */
+  slides?: string[];
   /** Optional associated project data object */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   project?: any;
@@ -50,6 +53,8 @@ export interface Spiral3DSliderProps {
   /** Callback when hovering over a slide. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onHover?: (project: any | null) => void;
+  /** Changing this value spins the helix (e.g. when a filter changes). */
+  spinKey?: string;
   /** Additional classes for the WebGL stage. */
   className?: string;
   /** Maximum horizontal radius of the spiral in pixels. */
@@ -80,11 +85,14 @@ export interface Spiral3DSliderProps {
 
 const vertexShader = `
   uniform float uBend;
+  uniform float uVel;
   varying vec2 vUv;
 
   void main() {
     vUv = uv;
     vec3 transformed = position;
+    // Speed stretch: fast spins elongate the tiles along the travel axis.
+    transformed.y *= 1.0 + min(abs(uVel) * 0.06, 0.28);
     float curve = 1.0 - cos(position.x * 3.14159265);
     transformed.z -= curve * uBend;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
@@ -97,6 +105,7 @@ const fragmentShader = `
   uniform float uPlaneAspect;
   uniform float uBlur;
   uniform float uDim;
+  uniform float uVel;
   varying vec2 vUv;
 
   vec2 coverUv(vec2 uv) {
@@ -112,6 +121,8 @@ const fragmentShader = `
   void main() {
     vec2 uv = coverUv(vUv);
     vec2 stepSize = vec2(0.005) * uBlur;
+    // Motion blur along the direction of travel, proportional to spin speed.
+    stepSize.y += min(abs(uVel) * 0.0035, 0.03);
     vec4 color = texture2D(uTexture, uv) * 0.23;
 
     color += texture2D(uTexture, uv + vec2(stepSize.x, 0.0)) * 0.12;
@@ -221,6 +232,11 @@ function SpiralScene({
 
   const { gl, viewport } = useThree();
   const progress = useRef(0);
+  const velocity = useRef(0);
+  const hovered = useRef<number | null>(null);
+  const slideTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const baseTextures = useRef<(Texture | null)[]>([]);
+  const textureCache = useRef(new Map<string, Texture>());
   const meshes = useRef<(Mesh | null)[]>([]);
   const materials = useRef<(ShaderMaterial | null)[]>([]);
 
@@ -236,6 +252,7 @@ function SpiralScene({
         uBlur: { value: 0 },
         uDim: { value: 1.0 },
         uBend: { value: 0 },
+        uVel: { value: 0 },
       })),
     [cardAspectRatio, placeholderTex, sceneItems],
   );
@@ -287,8 +304,12 @@ function SpiralScene({
           loadedTex.anisotropy = Math.min(4, gl.capabilities.getMaxAnisotropy());
           loadedTex.needsUpdate = true;
 
+          baseTextures.current[index] = loadedTex;
+          textureCache.current.set(item.src, loadedTex);
           const mat = materials.current[index];
-          if (mat) {
+          if (hovered.current === index) {
+            // A slideshow is running on this tile; it restores the base texture on leave.
+          } else if (mat) {
             mat.uniforms.uTexture.value = loadedTex;
             mat.uniforms.uImageAspect.value = imageAspect(loadedTex);
           } else if (uniforms[index]) {
@@ -336,7 +357,11 @@ function SpiralScene({
     const ease = reducedMotionRef.current
       ? 1
       : 1 - Math.pow(1 - smoothing, frameScale);
+    const before = progress.current;
     progress.current += (targetProgressRef.current - progress.current) * ease;
+    // Smoothed spin speed in slides per second (0 under reduced motion).
+    const instVel = reducedMotionRef.current ? 0 : (progress.current - before) / Math.max(safeDelta, 1e-3);
+    velocity.current += (instVel - velocity.current) * 0.18;
 
     const factor = Math.max(viewport.factor, 1);
     const planeWidth = Math.min(cardWidth / factor, viewport.width * 0.225);
@@ -377,8 +402,51 @@ function SpiralScene({
       material.uniforms.uDim!.value = effectiveDim;
       material.uniforms.uBend!.value = planeWidth * bend;
       material.uniforms.uPlaneAspect!.value = cardAspectRatio;
+      material.uniforms.uVel!.value = velocity.current;
     });
   });
+
+  // Hover slideshow: flip through a project's own slides, like swiping a carousel.
+  const setTileTexture = (index: number, tex: Texture) => {
+    const mat = materials.current[index];
+    if (!mat) return;
+    mat.uniforms.uTexture.value = tex;
+    mat.uniforms.uImageAspect.value = imageAspect(tex);
+  };
+  const loadCached = (url: string, done: (tex: Texture) => void) => {
+    const hit = textureCache.current.get(url);
+    if (hit) return done(hit);
+    new TextureLoader().load(url, (tex) => {
+      tex.colorSpace = SRGBColorSpace;
+      tex.minFilter = LinearFilter;
+      tex.magFilter = LinearFilter;
+      tex.needsUpdate = true;
+      textureCache.current.set(url, tex);
+      done(tex);
+    });
+  };
+  function startSlideshow(index: number) {
+    hovered.current = index;
+    const slides = sceneItems[index]?.slides ?? [];
+    if (slides.length < 2 || reducedMotionRef.current) return;
+    let frame = 0;
+    slides.slice(1, 4).forEach((u) => loadCached(u, () => {})); // warm the next few frames
+    slideTimer.current = setInterval(() => {
+      if (hovered.current !== index) return;
+      frame = (frame + 1) % slides.length;
+      loadCached(slides[frame]!, (tex) => {
+        if (hovered.current === index) setTileTexture(index, tex);
+      });
+    }, 650);
+  }
+  function stopSlideshow() {
+    if (slideTimer.current) clearInterval(slideTimer.current);
+    slideTimer.current = null;
+    const index = hovered.current;
+    hovered.current = null;
+    if (index != null && baseTextures.current[index]) setTileTexture(index, baseTextures.current[index]!);
+  }
+  useEffect(() => () => { if (slideTimer.current) clearInterval(slideTimer.current); }, []);
 
   return (
     <>
@@ -393,15 +461,24 @@ function SpiralScene({
             e.stopPropagation();
             // Suppress accidental click if user was dragging/spinning
             if (isDragSuppressedRef.current) return;
-            if (item.id) onSelect?.(item.id);
+            if (item.id) {
+              sfx.open();
+              onSelect?.(item.id);
+            }
           }}
           onPointerOver={(e) => {
             e.stopPropagation();
             document.body.style.cursor = "pointer";
+            if (hovered.current !== index) {
+              stopSlideshow();
+              startSlideshow(index);
+              sfx.tick();
+            }
             if (item.project) onHover?.(item.project);
           }}
           onPointerOut={() => {
             document.body.style.cursor = "auto";
+            stopSlideshow();
             onHover?.(null);
           }}
         >
@@ -440,6 +517,7 @@ export function Spiral3DSlider({
   bend = 0.17,
   fov = 44,
   ariaLabel = "Spiral image gallery",
+  spinKey,
 }: Spiral3DSliderProps) {
   const stageRef = useRef<HTMLDivElement>(null);
   const targetProgress = useRef(0);
@@ -453,6 +531,14 @@ export function Spiral3DSlider({
   const dragStartX = useRef(0);
   const totalDragDist = useRef(0);
   const isDragSuppressed = useRef(false);
+
+  // A filter change spins the helix a few turns so the new set "deals in".
+  const firstSpin = useRef(true);
+  useEffect(() => {
+    if (firstSpin.current) { firstSpin.current = false; return; }
+    targetProgress.current += 9;
+    lastInteraction.current = performance.now();
+  }, [spinKey]);
 
   // Keyboard navigation (Arrow keys)
   useEffect(() => {
