@@ -199,6 +199,7 @@ interface SpiralSceneProps {
   reducedMotionRef: MutableRefObject<boolean>;
   lastInteractionRef: MutableRefObject<number>;
   isDragSuppressedRef: MutableRefObject<boolean>;
+  quietUntilRef: MutableRefObject<number>;
   onSelect?: (id: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onHover?: (project: any | null) => void;
@@ -219,6 +220,7 @@ function SpiralScene({
   reducedMotionRef,
   lastInteractionRef,
   isDragSuppressedRef,
+  quietUntilRef,
   onSelect,
   onHover,
 }: SpiralSceneProps) {
@@ -399,7 +401,8 @@ function SpiralScene({
 
     // Machine: very fast throws hit the "redline" (edge flash + a rev).
     const speed = Math.abs(velocity.current);
-    const red = reducedMotionRef.current ? 0 : Math.min(1, Math.max(0, (speed - 7) / 6));
+    const quiet = performance.now() < quietUntilRef.current; // automatic filter spins don't redline
+    const red = reducedMotionRef.current || quiet ? 0 : Math.min(1, Math.max(0, (speed - 2.6) / 3));
     if (Math.abs(red - redline.current) > 0.02) {
       redline.current = red;
       document.documentElement.style.setProperty("--redline", red.toFixed(2));
@@ -606,8 +609,10 @@ export function Spiral3DSlider({
 
   // A filter change spins the helix a few turns so the new set "deals in".
   const firstSpin = useRef(true);
+  const quietUntil = useRef(0);
   useEffect(() => {
     if (firstSpin.current) { firstSpin.current = false; return; }
+    quietUntil.current = performance.now() + 1800;
     targetProgress.current += 9;
     lastInteraction.current = performance.now();
   }, [spinKey]);
@@ -754,6 +759,7 @@ export function Spiral3DSlider({
                 reducedMotionRef={reducedMotion}
                 lastInteractionRef={lastInteraction}
                 isDragSuppressedRef={isDragSuppressed}
+                quietUntilRef={quietUntil}
                 onSelect={onSelect}
                 onHover={onHover}
               />
