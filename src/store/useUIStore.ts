@@ -39,7 +39,7 @@ export const useUIStore = create<UIState>((set) => ({
   isMenuOpen: false,
   activeProjectId: null,
   hoveredProject: null,
-  isAudioPlaying: true,
+  isAudioPlaying: false,
   filter: null,
   isBriefOpen: false,
   isFreebieOpen: false,

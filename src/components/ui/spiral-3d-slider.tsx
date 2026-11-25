@@ -407,7 +407,7 @@ function SpiralScene({
       redline.current = red;
       document.documentElement.style.setProperty("--redline", red.toFixed(2));
     }
-    if (red > 0.5 && !revved.current) { revved.current = true; sfx.rev(); }
+    
     if (red === 0) revved.current = false;
 
     const factor = Math.max(viewport.factor, 1);
