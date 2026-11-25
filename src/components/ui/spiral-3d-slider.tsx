@@ -515,7 +515,10 @@ function SpiralScene({
     const base = baseTextures.current[index] ?? textureCache.current.get(sceneItems[index]?.src ?? "");
     if (base) setTileTexture(index, base);
   }
-  useEffect(() => () => { if (slideTimer.current) clearInterval(slideTimer.current); }, []);
+  useEffect(() => () => {
+    if (slideTimer.current) clearInterval(slideTimer.current);
+    document.documentElement.style.setProperty("--redline", "0"); // never leave the glow on
+  }, []);
 
   return (
     <>

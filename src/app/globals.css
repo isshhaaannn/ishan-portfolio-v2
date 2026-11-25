@@ -201,16 +201,6 @@ html.lenis, html.lenis body {
   }
 }
 
-/* Proof ticker marquee (home page). Pauses on hover; static under reduced motion. */
-@keyframes proof-ticker-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.proof-ticker__track { animation: proof-ticker-scroll 48s linear infinite; }
-.proof-ticker:hover .proof-ticker__track { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) {
-  .proof-ticker__track { animation: none; }
-}
 
 /* Redline: a red edge glow when the helix is thrown very fast (set from the helix). */
 body::after {

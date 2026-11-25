@@ -11,6 +11,15 @@ export function attachBeat(el: HTMLMediaElement) {
   if (connected === el) return;
   const a = audioContext();
   if (!a) return;
+  // Only reroute once audio is confirmed running; otherwise (e.g. iOS not yet
+  // unlocked) leave the music alone so it never goes silent.
+  a.resume().then(() => {
+    if (a.state === "running") connect(a, el);
+  }).catch(() => {});
+}
+
+function connect(a: AudioContext, el: HTMLMediaElement) {
+  if (connected === el) return;
   try {
     const src = a.createMediaElementSource(el);
     analyser = a.createAnalyser();
