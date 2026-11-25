@@ -43,6 +43,12 @@ export function HeroLine() {
           transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
           className="fixed z-20 left-4 right-4 sm:left-6 bottom-8 md:bottom-12 max-w-xl pointer-events-none"
         >
+          {/* Soft scrim so the line stays readable over light tiles drifting behind it. */}
+          <div
+            aria-hidden="true"
+            className="absolute -inset-x-10 -inset-y-12 -z-10 pointer-events-none"
+            style={{ background: "radial-gradient(ellipse at 30% 60%, rgba(0,0,0,0.78), rgba(0,0,0,0.45) 55%, transparent 78%)" }}
+          />
           <h1 className="text-[2.35rem] leading-[0.95] sm:text-5xl md:text-6xl font-bold tracking-tighter text-white text-balance">
             {HERO.line}
           </h1>

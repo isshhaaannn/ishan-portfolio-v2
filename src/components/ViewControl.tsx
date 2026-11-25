@@ -27,7 +27,7 @@ export function ViewControl() {
     `w-full text-left rounded-full px-3.5 py-2 text-sm transition-colors ${active ? "bg-[#100f0c] text-white" : "hover:bg-[#100f0c]/5"}`;
 
   return (
-    <div ref={ref} className="fixed top-18 md:top-5 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+    <div ref={ref} className="fixed top-18 lg:top-5 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
       <button
         type="button"
         aria-expanded={open}
