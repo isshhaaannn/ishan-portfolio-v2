@@ -13,7 +13,7 @@ export function AudioPlayer() {
     const audio = new Audio("/audio/bg-music.mp3");
     audio.loop = true;
     audio.volume = 0.45;
-    audio.preload = "none";
+    audio.preload = "auto";
     audioRef.current = audio;
 
     const handleEnded = () => {
@@ -32,19 +32,36 @@ export function AudioPlayer() {
     };
   }, []);
 
+  // A visitor who turned sound off keeps it off.
+  useEffect(() => {
+    try { if (localStorage.getItem("sound") === "off") setAudioPlaying(false); } catch {}
+  }, [setAudioPlaying]);
+
   // Sync state with audio playback
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (isAudioPlaying) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Autoplay was prevented by browser policy
-          setAudioPlaying(false);
-        });
-      }
+      // Browsers only allow sound after the visitor's first click, tap or key.
+      // Try now; if blocked, start on that first gesture and keep "sound on".
+      let armed = false;
+      const startOnGesture = () => {
+        audio.play().catch(() => {});
+        window.removeEventListener("pointerdown", startOnGesture);
+        window.removeEventListener("keydown", startOnGesture);
+      };
+      audio.play().catch(() => {
+        armed = true;
+        window.addEventListener("pointerdown", startOnGesture);
+        window.addEventListener("keydown", startOnGesture);
+      });
+      return () => {
+        if (armed) {
+          window.removeEventListener("pointerdown", startOnGesture);
+          window.removeEventListener("keydown", startOnGesture);
+        }
+      };
     } else {
       audio.pause();
     }

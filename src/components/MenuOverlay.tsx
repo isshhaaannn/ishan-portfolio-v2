@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useUIStore } from "@/store/useUIStore";
+import { AVAILABILITY } from "@/lib/site";
 import Link from "next/link";
 import gsap from "gsap";
 import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
@@ -387,12 +388,20 @@ export function MenuOverlay() {
           ref={footerRef}
           className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 w-full pt-4 border-t border-[#100f0c]/10"
         >
-          <a
-            href="mailto:isshhaaannn@gmail.com"
-            className="text-sm font-sans text-[#100f0c]/75 hover:text-[#100f0c] transition-colors pointer-events-auto"
-          >
-            isshhaaannn@gmail.com
-          </a>
+          <div className="flex flex-col gap-1.5">
+            {AVAILABILITY && (
+              <span className="inline-flex items-center gap-2 text-xs text-[#100f0c]/70">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1fbf6a]" aria-hidden="true" />
+                {AVAILABILITY}
+              </span>
+            )}
+            <a
+              href="mailto:isshhaaannn@gmail.com"
+              className="text-sm font-sans text-[#100f0c]/75 hover:text-[#100f0c] transition-colors pointer-events-auto"
+            >
+              isshhaaannn@gmail.com
+            </a>
+          </div>
 
           <div className="flex gap-2">
             {[

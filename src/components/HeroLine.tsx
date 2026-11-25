@@ -14,19 +14,15 @@ export function HeroLine() {
   const [quiet, setQuiet] = useState(true);
 
   useEffect(() => {
-    let t: ReturnType<typeof setTimeout>;
     const busy = (e: Event) => {
       // Using the hero itself (its book button) is not "spinning".
       if ((e.target as Element | null)?.closest?.("[data-hero]")) return;
-      setQuiet(false);
-      clearTimeout(t);
-      t = setTimeout(() => setQuiet(true), 7000);
+      setQuiet(false); // shown once on arrival; gone after the first interaction
     };
     window.addEventListener("wheel", busy, { passive: true });
     window.addEventListener("pointerdown", busy, { passive: true });
     window.addEventListener("keydown", busy);
     return () => {
-      clearTimeout(t);
       window.removeEventListener("wheel", busy);
       window.removeEventListener("pointerdown", busy);
       window.removeEventListener("keydown", busy);
@@ -45,7 +41,7 @@ export function HeroLine() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed z-20 left-4 right-4 sm:left-6 bottom-16 md:bottom-20 max-w-xl pointer-events-none"
+          className="fixed z-20 left-4 right-4 sm:left-6 bottom-8 md:bottom-12 max-w-xl pointer-events-none"
         >
           <h1 className="text-[2.35rem] leading-[0.95] sm:text-5xl md:text-6xl font-bold tracking-tighter text-white text-balance">
             {HERO.line}

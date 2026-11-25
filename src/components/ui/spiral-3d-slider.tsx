@@ -136,11 +136,10 @@ const fragmentShader = `
     color += texture2D(uTexture, uv + stepSize) * 0.025;
     color += texture2D(uTexture, uv - stepSize) * 0.025;
 
-    float luminance = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
-    color.rgb = mix(vec3(luminance), color.rgb, 1.18);
-    color.rgb = (color.rgb - 0.5) * 1.08 + 0.5;
+    // No grading: the work shows in its own colours. Only distant tiles dim.
     float brightness = clamp(uDim, 0.15, 1.0);
     gl_FragColor = vec4(clamp(color.rgb * brightness, 0.0, 1.0), 1.0);
+    #include <colorspace_fragment>
   }
 `;
 
@@ -418,7 +417,11 @@ function SpiralScene({
         Math.cos(angle) * 2.55,
       );
       mesh.rotation.set(0, Math.sin(angle) * -1.12, 0);
-      mesh.scale.set(planeWidth * scale, planeHeight * scale, 1);
+      // Each tile keeps its image's real shape (4:5 carousels, 16:9 thumbnails...)
+      // at roughly the same visual area as the original 3:2 card.
+      const aspect = Math.min(Math.max(material.uniforms.uImageAspect!.value as number, 0.5), 2.2);
+      const k = Math.sqrt(planeWidth * planeHeight);
+      mesh.scale.set(k * Math.sqrt(aspect) * scale, (k / Math.sqrt(aspect)) * scale, 1);
 
       // Middle 3 cards (|position| <= 1.25) are unblurred & 100% bright.
       const distFromMiddle3 = Math.max(0, Math.abs(position) - 1.25);
@@ -427,8 +430,9 @@ function SpiralScene({
 
       material.uniforms.uBlur!.value = effectiveBlur;
       material.uniforms.uDim!.value = effectiveDim;
-      material.uniforms.uBend!.value = planeWidth * bend;
-      material.uniforms.uPlaneAspect!.value = cardAspectRatio;
+      // The focused tile sits flat so its composition reads undistorted.
+      material.uniforms.uBend!.value = planeWidth * bend * Math.min(1, Math.abs(position));
+      material.uniforms.uPlaneAspect!.value = material.uniforms.uImageAspect!.value; // no cropping
       material.uniforms.uVel!.value = velocity.current;
     });
   });
@@ -591,6 +595,7 @@ export function Spiral3DSlider({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (document.body.dataset.inspect) return; // inspect view owns the arrow keys
       if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
         targetProgress.current += 1;
         lastInteraction.current = performance.now();

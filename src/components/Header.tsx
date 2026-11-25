@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUIStore } from "@/store/useUIStore";
 import { AudioPlayer } from "@/components/AudioPlayer";
-import { AVAILABILITY } from "@/lib/site";
+import { ViewControl } from "@/components/ViewControl";
 import { sfx } from "@/lib/sfx";
 
 export function Header() {
-  const { viewMode, setViewMode, toggleMenu, isMenuOpen, activeProjectId, setActiveProject, openBrief } = useUIStore();
+  const { toggleMenu, isMenuOpen, activeProjectId, setActiveProject, openBrief } = useUIStore();
   const pathname = usePathname();
 
   const isCloseMode = isMenuOpen || activeProjectId;
@@ -25,28 +25,8 @@ export function Header() {
         <Link href="/" className="text-xl sm:text-2xl font-bold tracking-tighter mix-blend-difference text-white">
           ishan.
         </Link>
-        {AVAILABILITY && !activeProjectId && (
-          <span className="hidden lg:inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/30 backdrop-blur-md px-3 py-1 text-xs text-white/75">
-            <span className="relative flex w-1.5 h-1.5" aria-hidden="true">
-              <span className="absolute inset-0 rounded-full bg-[#7CFFB2] opacity-60 motion-safe:animate-ping" />
-              <span className="relative w-1.5 h-1.5 rounded-full bg-[#7CFFB2]" />
-            </span>
-            {AVAILABILITY}
-          </span>
-        )}
       </div>
-
-      {/* Center Toggle (Switcher) - Responsive: floating glass pill below header on mobile, centered in header on desktop */}
-      {pathname !== '/about' && !isCloseMode && (
-        <div className="fixed top-18 md:top-6 left-1/2 -translate-x-1/2 flex items-center pointer-events-auto mix-blend-difference text-white z-30">
-          <button
-            onClick={() => setViewMode(viewMode === "spiral" ? "list" : "spiral")}
-            className="text-white/80 hover:text-white transition-all text-xs md:text-sm font-medium tracking-widest lowercase bg-white/10 md:bg-transparent backdrop-blur-md md:backdrop-blur-none px-3.5 py-1.5 md:p-0 rounded-full border border-white/15 md:border-none shadow-sm md:shadow-none"
-          >
-            {viewMode === "spiral" ? <span className="font-bold text-white">helix</span> : <span className="text-white/60">helix</span>} ㆍ {viewMode === "list" ? <span className="font-bold text-white">list</span> : <span className="text-white/60">list</span>}
-          </button>
-        </div>
-      )}
+      {pathname !== '/about' && !isCloseMode && <ViewControl />}
 
       {/* Right Controls (Audio Toggle & Menu Button) */}
       <div className={`flex items-center gap-2 sm:gap-2.5 ${isMenuOpen ? "pointer-events-none" : "pointer-events-auto"}`}>

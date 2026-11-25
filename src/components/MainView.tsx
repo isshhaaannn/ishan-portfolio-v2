@@ -7,9 +7,7 @@ import { SpiralSlider } from "./SpiralSlider";
 import { ProjectListView } from "./ProjectListView";
 import { OrigamiLoop } from "@/components/ui/origami-loop";
 import { AnimatePresence, motion } from "framer-motion";
-import { FilterChips } from "./FilterChips";
 import { HeroLine } from "./HeroLine";
-import { ProofTicker } from "./ProofTicker";
 import { CursorLabel } from "./CursorLabel";
 
 export function MainView({ projects }: { projects: Project[] }) {
@@ -97,12 +95,11 @@ export function MainView({ projects }: { projects: Project[] }) {
 
       {viewMode === "spiral" && (
         <>
-          <FilterChips />
           <HeroLine />
           <CursorLabel />
         </>
       )}
-      <ProofTicker />
+
     </>
   );
 }
