@@ -6,7 +6,7 @@ export const AVAILABILITY = "open for new projects right now";
 /** The line that sits over the helix on the home page. */
 export const HERO = {
   line: "Brand & content for founders.",
-  sub: "40M+ views for Steven Bartlett, Daily Mail, My First Million and the founders you follow.",
+  sub: "40M+ views for Steven Bartlett, Daily Mail, My First Million and the founders you follow. No cap.",
 };
 
 /** Proof ticker along the bottom of the home page. Real numbers and real clients only. */

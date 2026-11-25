@@ -77,7 +77,7 @@ export function BriefBuilder() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 id="brief-title" className="text-4xl sm:text-5xl font-bold tracking-tighter leading-[0.95]">
-                  what do you need?
+                  what are we cooking?
                 </h2>
                 <p className="mt-3 text-sm text-[#100f0c]/65 max-w-xs">
                   Tick everything that applies. It goes into your booking, so our 30-minute call starts on the right foot.

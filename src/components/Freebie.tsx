@@ -53,7 +53,7 @@ export function Freebie({ images }: { images: string[] }) {
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="relative w-full max-w-3xl max-h-[88dvh] overflow-y-auto rounded-[18px] bg-[#0c0c0b] border border-white/10 p-6 sm:p-9 text-[#F2EEE5]"
           >
-            <h2 id="freebie-title" className="text-4xl sm:text-5xl font-bold tracking-tighter">You found it.</h2>
+            <h2 id="freebie-title" className="text-4xl sm:text-5xl font-bold tracking-tighter">You found it. Respect.</h2>
             <p className="mt-3 text-sm text-white/60 max-w-md">My “Think. Design. Win.” wallpaper pack, free. Tap any one to download it.</p>
             <ul className="mt-7 grid grid-cols-2 sm:grid-cols-5 gap-3">
               {images.map((src) => (

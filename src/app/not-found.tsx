@@ -15,14 +15,14 @@ export default function NotFound() {
       </h1>
 
       <p className="max-w-md text-base sm:text-lg text-white/60 mb-10 leading-relaxed font-sans">
-        The page you are looking for doesn&apos;t exist or has moved. Explore the curated archive of works below.
+        Wrong turn. Happens to the best riders. The work&apos;s this way.
       </p>
 
       <Link
         href="/"
         className="inline-flex items-center gap-2 bg-[#fcfcfc] text-[#100f0c] font-medium rounded-full px-6 py-3 text-sm hover:bg-white shadow-lg hover:shadow-xl transition-all cursor-pointer border border-[#100f0c]/10 group"
       >
-        <span>Return to Works</span>
+        <span>back to the work</span>
         <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
       </Link>
     </div>

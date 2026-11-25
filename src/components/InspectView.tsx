@@ -27,7 +27,7 @@ export function InspectView({ projects }: { projects: Project[] }) {
 
   useEffect(() => {
     if (!project) return;
-    document.body.dataset.inspect = "1";
+    document.body.setAttribute("data-inspect", "1");
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setInspect(null);
       if (e.key === "ArrowRight") go(1);
@@ -36,7 +36,7 @@ export function InspectView({ projects }: { projects: Project[] }) {
     };
     window.addEventListener("keydown", onKey);
     return () => {
-      delete document.body.dataset.inspect;
+      document.body.removeAttribute("data-inspect");
       window.removeEventListener("keydown", onKey);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

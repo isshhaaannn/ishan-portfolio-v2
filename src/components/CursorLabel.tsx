@@ -26,7 +26,7 @@ export function CursorLabel() {
   }, [x, y]);
 
   const show = fine && isOverStage && viewMode === "spiral" && !activeProjectId && !isMenuOpen && !isBriefOpen;
-  const text = hoveredProject ? "open" : "drag";
+  const text = hoveredProject ? "tap in" : "drag";
 
   return (
     <AnimatePresence>

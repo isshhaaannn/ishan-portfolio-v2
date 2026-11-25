@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useUIStore } from "@/store/useUIStore";
+import { attachBeat } from "@/lib/beat";
+import { sfx } from "@/lib/sfx";
 
 export function AudioPlayer() {
   const { isAudioPlaying, toggleAudio, setAudioPlaying } = useUIStore();
@@ -30,6 +32,31 @@ export function AudioPlayer() {
       audio.pause();
       audioRef.current = null;
     };
+  }, []);
+
+  // On the first gesture (when browsers allow audio), route the music through
+  // the beat analyser so the helix can pulse with it.
+  useEffect(() => {
+    const first = () => {
+      if (audioRef.current) attachBeat(audioRef.current);
+      window.removeEventListener("pointerdown", first);
+      window.removeEventListener("keydown", first);
+    };
+    window.addEventListener("pointerdown", first);
+    window.addEventListener("keydown", first);
+    return () => { window.removeEventListener("pointerdown", first); window.removeEventListener("keydown", first); };
+  }, []);
+
+  // Drum pad: with sound on, keys A–L play percussion (not while typing).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      sfx.pad(e.key);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   // A visitor who turned sound off keeps it off.
@@ -72,6 +99,7 @@ export function AudioPlayer() {
       type="button"
       onClick={toggleAudio}
       aria-label={isAudioPlaying ? "Mute background music" : "Play background music"}
+      title={isAudioPlaying ? "sound on · psst, keys A–L are a drum pad" : "sound off"}
       className="flex items-center gap-1.5 sm:gap-2 bg-[#fcfcfc] text-[#100f0c] font-medium rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-white shadow-sm hover:shadow transition-all pointer-events-auto cursor-pointer border border-[#100f0c]/10 group select-none"
     >
       {/* Animated Equalizer Waveform */}

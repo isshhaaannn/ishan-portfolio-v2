@@ -5,7 +5,7 @@ import { useUIStore } from "@/store/useUIStore";
 import { Project } from "./3d/HelixCanvas";
 import { SpiralSlider } from "./SpiralSlider";
 import { ProjectListView } from "./ProjectListView";
-import { OrigamiLoop } from "@/components/ui/origami-loop";
+import { Ignition } from "./Ignition";
 import { AnimatePresence, motion } from "framer-motion";
 import { HeroLine } from "./HeroLine";
 import { CursorLabel } from "./CursorLabel";
@@ -15,11 +15,12 @@ export function MainView({ projects }: { projects: Project[] }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Instant reveal on mount without artificial delay
-    const frame = requestAnimationFrame(() => {
-      setIsLoading(false);
-    });
-    return () => cancelAnimationFrame(frame);
+    // First visit this session: let the ignition needle sweep once. Later: instant.
+    let seen = false;
+    try { seen = sessionStorage.getItem("ignited") === "1"; sessionStorage.setItem("ignited", "1"); } catch {}
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const t = setTimeout(() => setIsLoading(false), seen || reduce ? 0 : 950);
+    return () => clearTimeout(t);
   }, []);
 
   // Deep linking: read initial ?project=... on load
@@ -80,7 +81,7 @@ export function MainView({ projects }: { projects: Project[] }) {
             transition={{ duration: 0.5, ease: "easeInOut" }}
             className="fixed inset-0 z-50 bg-[#000000] flex flex-col items-center justify-center pointer-events-auto"
           >
-            <OrigamiLoop />
+            <Ignition />
           </motion.div>
         )}
       </AnimatePresence>

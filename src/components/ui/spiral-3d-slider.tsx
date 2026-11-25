@@ -22,6 +22,8 @@ if (typeof window !== "undefined") {
   Cache.enabled = true;
 }
 import { sfx } from "@/lib/sfx";
+import { beatLevel } from "@/lib/beat";
+import { useUIStore } from "@/store/useUIStore";
 import {
   Suspense,
   type MutableRefObject,
@@ -232,6 +234,8 @@ function SpiralScene({
   const { gl, viewport } = useThree();
   const progress = useRef(0);
   const velocity = useRef(0);
+  const redline = useRef(0);
+  const revved = useRef(false);
   const hovered = useRef<number | null>(null);
   const slideTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const baseTextures = useRef<(Texture | null)[]>([]);
@@ -389,6 +393,20 @@ function SpiralScene({
     const instVel = reducedMotionRef.current ? 0 : (progress.current - before) / Math.max(safeDelta, 1e-3);
     velocity.current += (instVel - velocity.current) * 0.18;
 
+    // Rhythm: the helix breathes with the music's kick (sound on, motion allowed).
+    const beat = reducedMotionRef.current ? 0 : beatLevel(useUIStore.getState().isAudioPlaying);
+    const pulse = 1 + beat * 0.045;
+
+    // Machine: very fast throws hit the "redline" (edge flash + a rev).
+    const speed = Math.abs(velocity.current);
+    const red = reducedMotionRef.current ? 0 : Math.min(1, Math.max(0, (speed - 7) / 6));
+    if (Math.abs(red - redline.current) > 0.02) {
+      redline.current = red;
+      document.documentElement.style.setProperty("--redline", red.toFixed(2));
+    }
+    if (red > 0.5 && !revved.current) { revved.current = true; sfx.rev(); }
+    if (red === 0) revved.current = false;
+
     const factor = Math.max(viewport.factor, 1);
     const planeWidth = Math.min(cardWidth / factor, viewport.width * 0.225);
     const planeHeight = planeWidth / cardAspectRatio;
@@ -421,7 +439,7 @@ function SpiralScene({
       // at roughly the same visual area as the original 3:2 card.
       const aspect = Math.min(Math.max(material.uniforms.uImageAspect!.value as number, 0.5), 2.2);
       const k = Math.sqrt(planeWidth * planeHeight);
-      mesh.scale.set(k * Math.sqrt(aspect) * scale, (k / Math.sqrt(aspect)) * scale, 1);
+      mesh.scale.set(k * Math.sqrt(aspect) * scale * pulse, (k / Math.sqrt(aspect)) * scale * pulse, 1);
 
       // Middle 3 cards (|position| <= 1.25) are unblurred & 100% bright.
       const distFromMiddle3 = Math.max(0, Math.abs(position) - 1.25);
