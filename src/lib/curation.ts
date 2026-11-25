@@ -1,5 +1,7 @@
 // Groups work by who it was made for (how buyers think), instead of by medium.
 // To place a new project, add its folder_name to one of the lists below.
+import extra from "@/data/extra_projects.json";
+import { FEATURED, FEATURED_LABEL } from "@/lib/featured";
 
 export const BUYERS = [
   "Founder brands",
@@ -46,19 +48,43 @@ const BY_FOLDER: Record<string, Buyer> = {
 /** Folders kept out of the grid; the wallpaper packs live in the hidden freebie instead. */
 const FREEBIE_FOLDERS = new Set(["iPhone", "PC"]);
 
-type RawProject = { folder_name?: string; category_display: string; asset_locations: string[] };
+type RawProject = {
+  id?: string;
+  folder_name?: string;
+  website_project_name?: string;
+  category_display: string;
+  asset_locations: string[];
+  buyer?: string;
+};
 
-export function buyerOf(p: RawProject): Buyer {
-  return (p.folder_name && BY_FOLDER[p.folder_name]) || "Startups & tech";
+export function buyerOf(p: RawProject): string {
+  return p.buyer || (p.folder_name && BY_FOLDER[p.folder_name]) || "Startups & tech";
 }
 
 export function isFreebie(p: RawProject) {
   return !!p.folder_name && FREEBIE_FOLDERS.has(p.folder_name);
 }
 
-/** Server-side: split the database into portfolio work (with a buyer tag) and freebie images. */
+/**
+ * Server-side: merge the database with the extra work, tag each project with its
+ * buyer, build the featured case studies, and set the wallpaper freebie aside.
+ */
 export function curate<T extends RawProject>(all: T[]) {
-  const work = all.filter((p) => !isFreebie(p)).map((p) => ({ ...p, buyer: buyerOf(p) }));
-  const freebies = all.filter(isFreebie).flatMap((p) => p.asset_locations);
-  return { work, freebies };
+  const merged = [...all, ...(extra as unknown as T[])];
+  const work = merged.filter((p) => !isFreebie(p)).map((p) => ({ ...p, buyer: buyerOf(p) }));
+  const byId = new Map(work.map((p) => [p.id, p]));
+  const cases = FEATURED.map((c) => {
+    const assets = c.from.flatMap((id) => byId.get(id)?.asset_locations ?? []);
+    return {
+      id: c.id,
+      folder_name: c.id,
+      website_project_name: c.name,
+      category_display: FEATURED_LABEL,
+      buyer: FEATURED_LABEL,
+      asset_locations: c.limit ? assets.slice(0, c.limit) : assets,
+      case: { brief: c.brief, thinking: c.thinking, idea: c.idea, result: c.result },
+    } as unknown as T & { buyer: string };
+  });
+  const freebies = merged.filter(isFreebie).flatMap((p) => p.asset_locations);
+  return { work: [...cases, ...work], freebies };
 }

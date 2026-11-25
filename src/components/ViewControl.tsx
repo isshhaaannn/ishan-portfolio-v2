@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useUIStore } from "@/store/useUIStore";
 import { BUYERS } from "@/lib/curation";
+import { FEATURED_LABEL } from "@/lib/featured";
 import { sfx } from "@/lib/sfx";
 
 /** One control for view (helix/list) and filter, replacing the switch + five chips. */
@@ -21,7 +22,7 @@ export function ViewControl() {
     return () => { window.removeEventListener("pointerdown", close); window.removeEventListener("keydown", esc); };
   }, [open]);
 
-  const label = (filter ?? "all work").toLowerCase();
+  const label = filter === FEATURED_LABEL ? "selected work" : (filter ?? "all work").toLowerCase();
   const item = (active: boolean) =>
     `w-full text-left rounded-full px-3.5 py-2 text-sm transition-colors ${active ? "bg-[#100f0c] text-white" : "hover:bg-[#100f0c]/5"}`;
 
@@ -57,11 +58,11 @@ export function ViewControl() {
               ))}
             </div>
             <div className="mt-2 grid gap-0.5" role="group" aria-label="Filter by client type">
-              {[null, ...BUYERS].map((b) => (
+              {[FEATURED_LABEL, null, ...BUYERS].map((b) => (
                 <button key={b ?? "all"} type="button" aria-pressed={filter === b}
                   onClick={() => { if (filter !== b) { sfx.snap(); setFilter(b); } setOpen(false); }}
                   className={item(filter === b)}>
-                  {(b ?? "all work").toLowerCase()}
+                  {b === FEATURED_LABEL ? "selected work" : (b ?? "all work").toLowerCase()}
                 </button>
               ))}
             </div>

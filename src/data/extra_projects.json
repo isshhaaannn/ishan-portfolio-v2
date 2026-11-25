@@ -1,0 +1,125 @@
+[
+ {
+  "id": "XP-001",
+  "folder_name": "Atomic Growth MFM",
+  "website_project_name": "My First Million",
+  "category_display": "Thumbnails",
+  "buyer": "Media & podcasts",
+  "asset_locations": [
+   "/projects/Atomic Growth MFM/01.webp",
+   "/projects/Atomic Growth MFM/02.webp",
+   "/projects/Atomic Growth MFM/03.webp",
+   "/projects/Atomic Growth MFM/04.webp",
+   "/projects/Atomic Growth MFM/05.webp",
+   "/projects/Atomic Growth MFM/06.webp"
+  ]
+ },
+ {
+  "id": "XP-002",
+  "folder_name": "Atomic Growth Generalist",
+  "website_project_name": "The Generalist",
+  "category_display": "Thumbnails",
+  "buyer": "Media & podcasts",
+  "asset_locations": [
+   "/projects/Atomic Growth Generalist/01.webp",
+   "/projects/Atomic Growth Generalist/02.webp"
+  ]
+ },
+ {
+  "id": "XP-003",
+  "folder_name": "Atomic Growth TKP",
+  "website_project_name": "The Knowledge Project",
+  "category_display": "Thumbnails",
+  "buyer": "Media & podcasts",
+  "asset_locations": [
+   "/projects/Atomic Growth TKP/01.webp",
+   "/projects/Atomic Growth TKP/02.webp"
+  ]
+ },
+ {
+  "id": "XP-004",
+  "folder_name": "Gulnar",
+  "website_project_name": "Gulnar",
+  "category_display": "Brand Identity",
+  "buyer": "Consumer brands",
+  "asset_locations": [
+   "/projects/Gulnar/01.webp",
+   "/projects/Gulnar/02.mp4",
+   "/projects/Gulnar/03.webp",
+   "/projects/Gulnar/04.webp",
+   "/projects/Gulnar/05.webp",
+   "/projects/Gulnar/06.webp",
+   "/projects/Gulnar/07.webp",
+   "/projects/Gulnar/08.webp",
+   "/projects/Gulnar/09.webp",
+   "/projects/Gulnar/10.webp",
+   "/projects/Gulnar/11.webp",
+   "/projects/Gulnar/12.webp",
+   "/projects/Gulnar/13.webp",
+   "/projects/Gulnar/14.webp",
+   "/projects/Gulnar/15.webp",
+   "/projects/Gulnar/16.webp",
+   "/projects/Gulnar/17.webp",
+   "/projects/Gulnar/18.webp"
+  ]
+ },
+ {
+  "id": "XP-005",
+  "folder_name": "CPS",
+  "website_project_name": "Centre for Policy Studies",
+  "category_display": "Social Systems",
+  "buyer": "Media & podcasts",
+  "asset_locations": [
+   "/projects/CPS/01.webp",
+   "/projects/CPS/02.mp4",
+   "/projects/CPS/03.webp",
+   "/projects/CPS/04.webp",
+   "/projects/CPS/05.webp",
+   "/projects/CPS/06.webp",
+   "/projects/CPS/07.webp",
+   "/projects/CPS/08.webp",
+   "/projects/CPS/09.webp",
+   "/projects/CPS/10.webp",
+   "/projects/CPS/11.webp",
+   "/projects/CPS/12.webp",
+   "/projects/CPS/13.webp",
+   "/projects/CPS/14.webp",
+   "/projects/CPS/15.webp"
+  ]
+ },
+ {
+  "id": "XP-006",
+  "folder_name": "CalCreme",
+  "website_project_name": "CalCreme",
+  "category_display": "Motion",
+  "buyer": "Consumer brands",
+  "asset_locations": [
+   "/projects/CalCreme/01.webp",
+   "/projects/CalCreme/02.mp4"
+  ]
+ },
+ {
+  "id": "XP-007",
+  "folder_name": "Dom Joly",
+  "website_project_name": "Dom Joly",
+  "category_display": "Motion",
+  "buyer": "Media & podcasts",
+  "asset_locations": [
+   "/projects/Dom Joly/01.webp",
+   "/projects/Dom Joly/02.mp4"
+  ]
+ },
+ {
+  "id": "XP-008",
+  "folder_name": "Amata",
+  "website_project_name": "Amata Jute Tea",
+  "category_display": "Print & Objects",
+  "buyer": "Consumer brands",
+  "asset_locations": [
+   "/projects/Amata/01.webp",
+   "/projects/Amata/02.webp",
+   "/projects/Amata/03.webp",
+   "/projects/Amata/04.webp"
+  ]
+ }
+]

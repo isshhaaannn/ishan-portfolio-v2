@@ -78,9 +78,24 @@ export function ProjectModal({ project, allProjects = [] }: ProjectModalProps) {
             <div className="md:col-span-1 text-lg font-medium opacity-60 uppercase tracking-widest">
               {project.category_display}
             </div>
-            <div className="md:col-span-2 text-xl md:text-3xl font-medium leading-relaxed">
-              {/* Fallback description if content_narrative is missing */}
-              {project.category_display} project showcasing world-class design and performance creative.
+            <div className="md:col-span-2 grid gap-8">
+              {project.case ? (
+                ([
+                  ["The brief", project.case.brief],
+                  ["The thinking", project.case.thinking],
+                  ["The idea", project.case.idea],
+                  ["The result", project.case.result],
+                ] as const)
+                  .filter(([, text]) => text)
+                  .map(([label, text]) => (
+                    <div key={label}>
+                      <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-black/45 mb-2">{label}</h2>
+                      <p className="text-xl md:text-3xl font-medium leading-snug">{text}</p>
+                    </div>
+                  ))
+              ) : project.content_narrative ? (
+                <p className="text-xl md:text-3xl font-medium leading-relaxed">{project.content_narrative}</p>
+              ) : null}
             </div>
           </div>
 
@@ -99,15 +114,20 @@ export function ProjectModal({ project, allProjects = [] }: ProjectModalProps) {
                 "md:col-span-12"
               ][i % 9];
               return (
-                <div key={i} className={`rounded-2xl overflow-hidden bg-black/5 ${spanClasses}`}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={encodeURI(src)}
-                    alt={`${project.website_project_name} - ${i + 1}`}
-                    className="w-full h-full object-cover"
-                    loading={i === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                  />
+                <div key={i} className={`rounded-2xl overflow-hidden bg-black/5 self-start ${spanClasses}`}>
+                  {/\.(mp4|webm|mov)$/i.test(src) ? (
+                    <video src={encodeURI(src)} controls playsInline preload="metadata" className="w-full h-auto block bg-black" />
+                  ) : (
+                    // Shown uncropped, at its real proportions.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={encodeURI(src)}
+                      alt={`${project.website_project_name} - ${i + 1}`}
+                      className="w-full h-auto block"
+                      loading={i === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                  )}
                 </div>
               );
             })}

@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motio
 import { Project } from "./3d/HelixCanvas";
 import { useUIStore } from "@/store/useUIStore";
 import { BUYERS } from "@/lib/curation";
+import { FEATURED_LABEL } from "@/lib/featured";
 
 interface ProjectListViewProps {
   projects: Project[];
@@ -23,8 +24,8 @@ export function ProjectListView({ projects }: ProjectListViewProps) {
 
   // Group projects by who the work was made for (see src/lib/curation.ts)
   const groupOf = (p: Project) => p.buyer ?? p.category_display;
-  const categories = (BUYERS as readonly string[]).filter((b) => projects.some((p) => groupOf(p) === b))
-    .concat(Array.from(new Set(projects.map(groupOf))).filter((c) => !(BUYERS as readonly string[]).includes(c)));
+  const categories = [FEATURED_LABEL, ...(BUYERS as readonly string[])].filter((b) => projects.some((p) => groupOf(p) === b))
+    .concat(Array.from(new Set(projects.map(groupOf))).filter((c) => c !== FEATURED_LABEL && !(BUYERS as readonly string[]).includes(c)));
 
   const categoryProjects = hoveredCategory
     ? projects.filter((p) => groupOf(p) === hoveredCategory)

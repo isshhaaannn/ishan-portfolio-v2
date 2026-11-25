@@ -11,7 +11,12 @@ export type Project = {
   asset_locations: string[];
   /** Who the work was made for (see src/lib/curation.ts). */
   buyer?: string;
+  /** Present on featured case studies (see src/lib/featured.ts). */
+  case?: { brief: string; thinking: string; idea: string; result: string };
+  content_narrative?: string;
 };
+
+const isVideo = (s: string) => /\.(mp4|webm|mov)$/i.test(s);
 
 export function HelixCanvas({ projects, onSelect }: { projects: Project[], onSelect: (id: string) => void }) {
   const { setHoveredProject, filter, setOverStage } = useUIStore();
@@ -19,13 +24,14 @@ export function HelixCanvas({ projects, onSelect }: { projects: Project[], onSel
   const items: Spiral3DSlide[] = useMemo(
     () =>
       projects
-        .filter((p) => !filter || p.buyer === filter)
+        // "All work" leaves out the case studies (their work is already in the helix).
+        .filter((p) => (filter ? p.buyer === filter : !p.case))
         .map((p) => ({
           id: p.id,
           src: encodeURI(p.asset_locations[0]),
           alt: p.website_project_name,
           project: p,
-          slides: p.asset_locations.slice(0, 8).map((s) => encodeURI(s)),
+          slides: p.asset_locations.filter((s) => !isVideo(s)).slice(0, 8).map((s) => encodeURI(s)),
         })),
     [projects, filter]
   );
